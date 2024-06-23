@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Data Analysis</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+<header>
+    <img src="{% static 'images/logo.png' %}" alt="TED University Logo" style="width: 100px; height: auto;">
+    <h1>University Data Analysis</h1>
+    <nav>
+        <ul>
+            <li><a href="{% url 'home' %}" id="home-link">Home</a></li>
+            <li><a href="{% url 'filters_page' %}">Tables & Analysis</a></li>
+            <li><a href="{% url 'contact_us' %}" id="contact-link">Contact</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <section id="home" class="content-section">
+        <h2>Welcome to the University Data Analysis Site</h2>
+        <p>This site provides detailed analysis of university programs based on various criteria.</p>
+        <img src="{% static 'images/ted_university.jpg' %}" alt="University Data Analysis" class="home-photo">
+
+    </section>
+    <section id="contact" class="content-section" style="display: none;">
+        <h2>Contact With Developers</h2>
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 col-md-6">
+                    <div class="row">
+                        <p><a href="https://www.linkedin.com/in/emiraydinn" target="_blank">Emir Aydın</a></p>
+                        <img src="{% static 'images/emiraydin.jpg' %}" alt="Emir Aydın Fotoğrafı" class="profile-photo">
+                        <p>Software Engineer</p>
+                        <p>emir.aydin@tedu.edu.tr</p>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-6">
+                    <div class="row">
+                        <p><a href="https://www.linkedin.com/in/mustafaoncu" target="_blank">Mustafa Öncü</a></p>
+                        <img src="{% static 'images/mustafaoncu.jpg' %}" alt="Mustafa Öncü Fotoğrafı"
+                             class="profile-photo">
+                        <p>Computer Engineer</p>
+                        <p>mustafa.oncu@tedu.edu.tr</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </section>
+
+</main>
+
+<footer>
+    <p>&copy; 2024 University Data Analysis. All rights reserved by <a href="https://www.linkedin.com/in/emiraydinn"
+                                                                       target="_blank" class="linkedin-link">Emir
+        Aydın</a>.</p>
+</footer>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="static/js/document.js"></script>
+<script>
+    document.getElementById('home-link').addEventListener('click', function (event) {
+        event.preventDefault();
+        showSection('home');
+    });
+
+    document.getElementById('tables-link').addEventListener('click', function (event) {
+        event.preventDefault();
+        showSection('tables');
+    });
+
+    document.getElementById('contact-link').addEventListener('click', function (event) {
+        event.preventDefault();
+        showSection('contact');
+    });
+
+    function showSection(sectionId) {
+        var sections = document.getElementsByClassName('content-section');
+        for (var i = 0; i < sections.length; i++) {
+            sections[i].style.display = 'none';
+        }
+        document.getElementById(sectionId).style.display = 'block';
+    }
+</script>
+</body>
+</html>

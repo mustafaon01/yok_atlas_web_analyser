@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tables{% endblock %}
+{% block content %}
+    <h2>Tables & Analysis</h2>
+    <form method="get">
+        <div class="filters container">
+            <div class="row">
+                <label for="university_name">University Name:</label>
+                <select id="university_name" name="university_name">
+                    {% for choice in form.university_name.field.choices %}
+                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="row">
+                <label for="university_type">University Type:</label>
+                <select id="university_type" name="university_type">
+                    {% for choice in form.university_type.field.choices %}
+                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="row">
+                <label for="year">Year:</label>
+                <select id="year" name="year">
+                    {% for choice in form.year.field.choices %}
+                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <button type="submit" id="filter-button">Filter</button>
+            </div>
+        </div>
+    </form>
+
+    <table id="data-table">
+        <thead>
+        <tr>
+            <th>Program Code</th>
+            <th>Department Name</th>
+            <th>University Name</th>
+            <th>University Type</th>
+            <th>Genel Kontenjan</th>
+            <th>İlk Yerleşme Oranı</th>
+            <th>Puan Türü</th>
+            <th>Yıl</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in page_obj %}
+            <tr>
+                <td>{{ item.pro_code }}</td>
+                <td>{{ item.bolum_adi }}</td>
+                <td>{{ item.üniversite }}</td>
+                <td>{{ item.üniversite_türü }}</td>
+                <td>{{ item.genel_kontenjan }}</td>
+                <td>{{ item.i_lk_yerleşme_oranı }}</td>
+                <td>{{ item.puan_türü }}</td>
+                <td>{{ item.yil }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; ilk</a>
+                <a href="?page={{ page_obj.previous_page_number }}">önceki</a>
+            {% endif %}
+
+            <span class="current">
+                Sayfa {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">sonraki</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">son &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('select').select2(); // Select2 ile dropdown menülerini daha kullanıcı dostu hale getirin
+        });
+    </script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+{% endblock %}

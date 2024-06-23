@@ -1,0 +1,25 @@
+<!-- templates/base.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Site{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+{% include 'header.html' %}
+
+<main>
+    {% block content %}
+        <h2>Welcome to the University Data Analysis Site</h2>
+        <p>This site provides detailed analysis of university programs based on various criteria.</p>
+        <img src="{% static 'images/ted_university.jpg' %}" alt="University Data Analysis" class="home-photo">
+    {% endblock %}
+</main>
+
+{% include 'footer.html' %}
+</body>
+</html>

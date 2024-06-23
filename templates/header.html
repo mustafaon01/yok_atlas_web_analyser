@@ -1,0 +1,14 @@
+{% load static %}
+<header>
+    <img src="{% static 'images/logo.png' %}" alt="TED University Logo" style="width: 100px; height: auto;">
+    <h1>University Data Analysis</h1>
+    <nav>
+        <ul>
+            <li><a href="{% url 'home' %}" id="home-link">Home</a></li>
+            <li><a href="{% url 'filters_page' %}">Tables & Analysis</a></li>
+            <li><a href="{% url 'compare_page' %}" id="contact-link">Compare</a></li>
+            <li><a href="{% url 'old_hc_data_page' %}" id="contact-link">HC</a></li>
+            <li><a href="{% url 'contact_us' %}" id="contact-link">Contact</a></li>
+        </ul>
+    </nav>
+</header>
