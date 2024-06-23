@@ -1,12 +1,55 @@
 from django.shortcuts import render
+from django.http import HttpResponse
 from last_kgo.settings import *
 from django.core.paginator import Paginator
 from .models import *
 from .forms import *
+import openpyxl
 
 
 def home(request):
     return render(request, 'base.html')
+
+
+def export_to_excel(data_list):
+    # Create an in-memory output file for the new workbook.
+    output = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    )
+    output['Content-Disposition'] = 'attachment; filename=universities_data.xlsx'
+
+    # Create workbook and worksheet
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Universities Data"
+
+    # Define the titles for columns
+    columns = [
+        'Program Code', 'Department Name', 'University Name',
+        'University Type', 'Genel Kontenjan', 'İlk Yerleşme Oranı', 'Puan Türü', 'Yıl'
+    ]
+    row_num = 1
+
+    # Assign the titles for each cell of the header
+    for col_num, column_title in enumerate(columns, 1):
+        cell = ws.cell(row=row_num, column=col_num)
+        cell.value = column_title
+
+    # Write data to cells
+    for item in data_list:
+        row_num += 1
+        row = [
+            item.pro_code, item.bolum_adi, item.üniversite,
+            item.üniversite_türü, item.genel_kontenjan, item.i_lk_yerleşme_oranı,
+            item.puan_türü, item.yil
+        ]
+        for col_num, cell_value in enumerate(row, 1):
+            cell = ws.cell(row=row_num, column=col_num)
+            cell.value = cell_value
+
+    # Save the workbook to the response
+    wb.save(output)
+    return output
 
 
 def filters_page(request):
@@ -19,12 +62,13 @@ def filters_page(request):
         year = form.cleaned_data.get('year')
         if university_type:
             data_list = data_list.filter(üniversite_türü=university_type)
-
         if university_name:
             data_list = data_list.filter(üniversite=university_name)
-
         if year:
             data_list = data_list.filter(yil=year)
+
+    if 'export' in request.GET:
+        return export_to_excel(data_list)
 
     paginator = Paginator(data_list, 50)
     page_number = request.GET.get('page', 1)
