@@ -5,25 +5,39 @@ from .models import *
 
 class YourModelFilterForm(forms.Form):
     university_type = forms.ChoiceField(
-        choices=[('', 'All University Types')] + [(choice, choice) for choice in
+        choices=[('', 'Hepsi')] + [(choice, choice) for choice in
                                                   GenelBilgilerLast2024.objects.values_list('üniversite_türü',
                                                                                             flat=True).distinct()],
         required=False,
-        label='University Type'
+        label='Universite Türü'
     )
     university_name = forms.ChoiceField(
-        choices=[('', 'All Universities')] + [(choice, choice) for choice in
+        choices=[('', 'Hepsi')] + [(choice, choice) for choice in
                                               GenelBilgilerLast2024.objects.values_list('üniversite',
                                                                                         flat=True).distinct()],
         required=False,
-        label='University'
+        label='üniversite'
+    )
+    major_name = forms.ChoiceField(
+        choices=[('', 'Hepsi')] + [(choice, choice) for choice in
+                                              GenelBilgilerLast2024.objects.values_list('bolum_adi',
+                                                                                        flat=True).distinct()],
+        required=False,
+        label='Bölüm'
     )
     year = forms.ChoiceField(
-        choices=[('', 'All Years')] + [(choice, choice) for choice in
+        choices=[('', 'Hepsi')] + [(choice, choice) for choice in
                                               GenelBilgilerLast2024.objects.values_list('yil',
                                                                                         flat=True).distinct()],
         required=False,
         label='Yıl'
+    )
+    scholarship = forms.ChoiceField(
+        choices=[('', 'Hepsi')] + [(choice, choice) for choice in
+                                              GenelBilgilerLast2024.objects.values_list('burs_türü',
+                                                                                        flat=True).distinct()],
+        required=False,
+        label='Burs Türü'
     )
 
 

@@ -56,3 +56,24 @@ class HacettepeData(models.Model):
     class Meta:
         managed = False
         db_table = 'hacettepe_data'
+
+
+class HighSchoolTable(models.Model):
+    id = models.BigIntegerField(blank=False, null=False, primary_key=True)
+    pro_code = models.BigIntegerField(blank=True, null=True)
+    year = models.IntegerField(blank=True, null=True)
+    university = models.TextField(blank=True, null=True)
+    major_name = models.TextField(blank=True, null=True)
+    university_type = models.TextField(blank=True, null=True)
+    grade_type = models.TextField(blank=True, null=True)
+    scholarship_type = models.TextField(blank=True, null=True)
+    hihg_school = models.TextField(blank=True, null=True)
+    city = models.TextField(blank=True, null=True)
+    district = models.TextField(blank=True, null=True)
+    new_graduate = models.TextField(blank=True, null=True)
+    old_graduate = models.TextField(blank=True, null=True)
+    total = models.BigIntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'high_school_table'

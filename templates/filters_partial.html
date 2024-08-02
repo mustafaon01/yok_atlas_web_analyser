@@ -1,0 +1,47 @@
+<div class="filters container">
+    <div class="row">
+        <label for="university_name">Üniversite:</label>
+        <select id="university_name" name="university_name">
+            {% for choice in form.university_name.field.choices %}
+                <option value="{{ choice.0 }}"
+                        {% if form.university_name.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="row">
+        <label for="university_type">Üniversite Türü:</label>
+        <select id="university_type" name="university_type">
+            {% for choice in form.university_type.field.choices %}
+                <option value="{{ choice.0 }}"
+                        {% if form.university_type.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="row">
+        <label for="major_name">Bölüm:</label>
+        <select id="major_name" name="major_name">
+            {% for choice in form.major_name.field.choices %}
+                <option value="{{ choice.0 }}"
+                        {% if form.major_name.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="row">
+        <label for="year">Yıl:</label>
+        <select id="year" name="year">
+            {% for choice in form.year.field.choices %}
+                <option value="{{ choice.0 }}"
+                        {% if form.year.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="row">
+        <label for="scholarship">Burs Türü:</label>
+        <select id="scholarship" name="scholarship">
+            {% for choice in form.scholarship.field.choices %}
+                <option value="{{ choice.0 }}"
+                        {% if form.scholarship.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Compare Universities{% endblock %}
+{% block content %}
+
+<table id="data-table">
+        <thead>
+        <tr>
+            <th>Bölüm</th>
+            <th>Üniversite</th>
+            <th>Lise</th>
+            <th>İl</th>
+            <th>İlçe</th>
+            <th>Yeni Mezun</th>
+            <th>Önceki Mezun</th>
+            <th>Toplam</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in high_school_data %}
+            <tr>
+                <td>{{ item.major_name }}</td>
+                <td>{{ item.university }}</td>
+                <td>{{ item.hihg_school }}</td>
+                <td>{{ item.city }}</td>
+                <td>{{ item.district }}</td>
+                <td>{{ item.new_graduate }}</td>
+                <td>{{ item.old_graduate }}</td>
+                <td>{{ item.total }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if high_school_data.has_previous %}
+                <a href="?page=1">&laquo; ilk</a>
+                <a href="?page={{ high_school_data.previous_page_number }}">önceki</a>
+            {% endif %}
+
+            <span class="current">
+                Sayfa {{ high_school_data.number }} / {{ high_school_data.paginator.num_pages }}.
+            </span>
+
+            {% if high_school_data.has_next %}
+                <a href="?page={{ high_school_data.next_page_number }}">sonraki</a>
+                <a href="?page={{ high_school_data.paginator.num_pages }}">son &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+{% endblock %}

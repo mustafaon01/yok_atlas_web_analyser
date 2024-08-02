@@ -4,29 +4,50 @@
 {% block title %}Tables{% endblock %}
 {% block content %}
     <h2>Tables & Analysis</h2>
-    <form method="get">
+    <form method="get" id="filter-form">
         <div class="filters container">
             <div class="row">
-                <label for="university_name">University Name:</label>
+                <label for="university_name">Üniversite:</label>
                 <select id="university_name" name="university_name">
                     {% for choice in form.university_name.field.choices %}
-                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                        <option value="{{ choice.0 }}"
+                                {% if form.university_name.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
                     {% endfor %}
                 </select>
             </div>
             <div class="row">
-                <label for="university_type">University Type:</label>
+                <label for="university_type">Üniversite Türü:</label>
                 <select id="university_type" name="university_type">
                     {% for choice in form.university_type.field.choices %}
-                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                        <option value="{{ choice.0 }}"
+                                {% if form.university_type.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
                     {% endfor %}
                 </select>
             </div>
             <div class="row">
-                <label for="year">Year:</label>
+                <label for="major_name">Bölüm:</label>
+                <select id="major_name" name="major_name">
+                    {% for choice in form.major_name.field.choices %}
+                        <option value="{{ choice.0 }}"
+                                {% if form.major_name.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="row">
+                <label for="year">Yıl:</label>
                 <select id="year" name="year">
                     {% for choice in form.year.field.choices %}
-                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                        <option value="{{ choice.0 }}"
+                                {% if form.year.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="row">
+                <label for="scholarship">Burs Türü:</label>
+                <select id="scholarship" name="scholarship">
+                    {% for choice in form.scholarship.field.choices %}
+                        <option value="{{ choice.0 }}"
+                                {% if form.scholarship.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -40,15 +61,15 @@
     <table id="data-table">
         <thead>
         <tr>
-            <th>Program Code</th>
-            <th>Department Name</th>
-            <th>University Name</th>
-            <th>University Type</th>
+            <th>Program Kodu</th>
+            <th>Bölüm</th>
+            <th>Üniversite</th>
+            <th>Üniversite Türü</th>
+            <th>Burs</th>
             <th>Genel Kontenjan</th>
             <th>İlk Yerleşme Oranı</th>
             <th>Puan Türü</th>
             <th>Yıl</th>
-
         </tr>
         </thead>
         <tbody>
@@ -58,6 +79,7 @@
                 <td>{{ item.bolum_adi }}</td>
                 <td>{{ item.üniversite }}</td>
                 <td>{{ item.üniversite_türü }}</td>
+                <td>{{ item.burs_türü }}</td>
                 <td>{{ item.genel_kontenjan }}</td>
                 <td>{{ item.i_lk_yerleşme_oranı }}</td>
                 <td>{{ item.puan_türü }}</td>
@@ -85,11 +107,33 @@
         </span>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('select').select2(); // Select2 ile dropdown menülerini daha kullanıcı dostu hale getirin
+            function bindFilterEvents() {
+                $('select').select2(); // Select2 ile dropdown menülerini daha kullanıcı dostu hale getirin
+
+                $('#university_name, #university_type, #major_name, #year, #scholarship').change(function () {
+                    $.ajax({
+                        url: $('#filter-form').attr('action'),
+                        data: $('#filter-form').serialize(),
+                        type: $('#filter-form').attr('method'),
+                        success: function (response) {
+                            console.log("başarılı");
+                            $('#filter-form').html($(response).find('#filter-form').html());
+                            bindFilterEvents(); // Yeni form alanlarına tekrar dinleyici ekle
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("AJAX Hatası: ", status, error);
+                        }
+                    });
+                });
+            }
+
+            bindFilterEvents(); // Sayfa ilk yüklendiğinde dinleyicileri bağla
         });
     </script>
+
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 {% endblock %}

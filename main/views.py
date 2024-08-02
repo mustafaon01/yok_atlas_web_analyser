@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.db.models import OuterRef, Subquery, F
 from last_kgo.settings import *
 from django.core.paginator import Paginator
 from .models import *
@@ -26,7 +27,7 @@ def export_to_excel(data_list):
     # Define the titles for columns
     columns = [
         'Program Code', 'Department Name', 'University Name',
-        'University Type', 'Genel Kontenjan', 'İlk Yerleşme Oranı', 'Puan Türü', 'Yıl'
+        'University Type', 'Burs Türü', 'Genel Kontenjan', 'İlk Yerleşme Oranı', 'Puan Türü', 'Yıl'
     ]
     row_num = 1
 
@@ -39,9 +40,10 @@ def export_to_excel(data_list):
     for item in data_list:
         row_num += 1
         row = [
-            item.pro_code, item.bolum_adi, item.üniversite,
-            item.üniversite_türü, item.genel_kontenjan, item.i_lk_yerleşme_oranı,
-            item.puan_türü, item.yil
+            item.get('pro_code'), item.get('bolum_adi'), item.get('üniversite'),
+            item.get('üniversite_türü'), item.get('burs_türü'), item.get('genel_kontenjan'),
+            item.get('i_lk_yerleşme_oranı'),
+            item.get('puan_türü'), item.get('yil')
         ]
         for col_num, cell_value in enumerate(row, 1):
             cell = ws.cell(row=row_num, column=col_num)
@@ -54,21 +56,57 @@ def export_to_excel(data_list):
 
 def filters_page(request):
     form = YourModelFilterForm(request.GET)
-    data_list = GenelBilgilerLast2024.objects.all()
+    data_list = GenelBilgilerLast2024.objects.all().order_by('üniversite')
 
     if form.is_valid():
         university_type = form.cleaned_data.get('university_type')
         university_name = form.cleaned_data.get('university_name')
         year = form.cleaned_data.get('year')
+        scholarship = form.cleaned_data.get('scholarship')
+        major_name = form.cleaned_data.get('major_name')
+
         if university_type:
             data_list = data_list.filter(üniversite_türü=university_type)
         if university_name:
             data_list = data_list.filter(üniversite=university_name)
+        if major_name:
+            data_list = data_list.filter(bolum_adi=major_name)
         if year:
-            data_list = data_list.filter(yil=year)
+            try:
+                year = int(year)
+                data_list = data_list.filter(yil=year)
+            except ValueError:
+                print("passing..")
+                pass
+        if scholarship:
+            data_list = data_list.filter(burs_türü=scholarship)
+
+        request.session['filtered_data'] = []
+        request.session['filtered_data'] = list(data_list.values())
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        form.fields['university_type'].choices = [('', 'Hepsi')] + [(choice, choice) for choice in
+                                                                    data_list.values_list('üniversite_türü',
+                                                                                          flat=True).distinct()]
+        form.fields['university_name'].choices = [('', 'Hepsi')] + [(choice, choice) for choice in
+                                                                    data_list.values_list('üniversite',
+                                                                                          flat=True).distinct()]
+        form.fields['major_name'].choices = [('', 'Hepsi')] + [(choice, choice) for choice in
+                                                                    data_list.values_list('bolum_adi',
+                                                                                          flat=True).distinct()]
+
+        form.fields['year'].choices = [('', 'Hepsi')] + [(choice, choice) for choice in
+                                                         data_list.values_list('yil', flat=True).distinct()]
+        form.fields['scholarship'].choices = [('', 'Hepsi')] + [(choice, choice) for choice in
+                                                                data_list.values_list('burs_türü',
+                                                                                      flat=True).distinct()]
+
+        return render(request, 'filters.html', {'form': form})
 
     if 'export' in request.GET:
-        return export_to_excel(data_list)
+        filtered_data = request.session.get('filtered_data', [])
+        print("filtered", filtered_data)
+        return export_to_excel(filtered_data)
 
     paginator = Paginator(data_list, 50)
     page_number = request.GET.get('page', 1)
@@ -142,3 +180,12 @@ def compare_page(request):
     }
 
     return render(request, 'compare.html', context)
+
+
+def high_school_page(request):
+    high_school_data = HighSchoolTable.objects.all().order_by('university')
+    paginator = Paginator(high_school_data, 50)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'high_school.html', {'high_school_data': page_obj})
