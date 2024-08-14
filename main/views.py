@@ -55,8 +55,8 @@ def export_to_excel(data_list):
 
 
 def filters_page(request):
-    form = YourModelFilterForm(request.GET)
-    data_list = GenelBilgilerLast2024.objects.all().order_by('üniversite')
+    form = GeneralInformationForm(request.GET)
+    data_list = GeneralInformation.objects.all().order_by('üniversite')
 
     if form.is_valid():
         university_type = form.cleaned_data.get('university_type')
@@ -66,20 +66,19 @@ def filters_page(request):
         major_name = form.cleaned_data.get('major_name')
 
         if university_type:
-            data_list = data_list.filter(üniversite_türü=university_type)
+            data_list = data_list.filter(üniversite_türü__in=university_type)
         if university_name:
-            data_list = data_list.filter(üniversite=university_name)
+            data_list = data_list.filter(üniversite__in=university_name)
         if major_name:
-            data_list = data_list.filter(bolum_adi=major_name)
+            data_list = data_list.filter(bolum_adi__in=major_name)
         if year:
             try:
-                year = int(year)
-                data_list = data_list.filter(yil=year)
+                data_list = data_list.filter(yil__in=year)
             except ValueError:
                 print("passing..")
                 pass
         if scholarship:
-            data_list = data_list.filter(burs_türü=scholarship)
+            data_list = data_list.filter(burs_türü__in=scholarship)
 
         request.session['filtered_data'] = []
         request.session['filtered_data'] = list(data_list.values())
@@ -128,60 +127,6 @@ def old_hc_data_page(request):
     return render(request, 'hc.html')
 
 
-def compare_page(request):
-    form = CompareUniversitiesForm()
-    university_left_data = None
-    university_right_data = None
-    university_name_left = None
-    university_name_right = None
-
-    if request.method == 'POST':
-        form = CompareUniversitiesForm(request.POST)
-        if form.is_valid():
-            university_name_left = form.cleaned_data['university_name_left']
-            university_name_right = form.cleaned_data['university_name_right']
-            major_name_left = form.cleaned_data['major_name_left']
-            major_name_right = form.cleaned_data['major_name_right']
-            university_type_left = form.cleaned_data['university_type_left']
-            university_type_right = form.cleaned_data['university_type_right']
-            year_left = form.cleaned_data['year_left']
-            year_right = form.cleaned_data['year_right']
-
-            left_filter = {}
-            right_filter = {}
-
-            if university_name_left:
-                left_filter['üniversite'] = university_name_left
-            if university_type_left:
-                left_filter['üniversite_türü'] = university_type_left
-            if year_left:
-                left_filter['yil'] = year_left
-            if major_name_left:
-                left_filter['bolum_adi'] = major_name_left
-
-            if university_name_right:
-                right_filter['üniversite'] = university_name_right
-            if university_type_right:
-                right_filter['üniversite_türü'] = university_type_right
-            if year_right:
-                right_filter['yil'] = year_right
-            if major_name_right:
-                right_filter['bolum_adi'] = major_name_right
-
-            university_left_data = GenelBilgilerLast2024.objects.filter(**left_filter)
-            university_right_data = GenelBilgilerLast2024.objects.filter(**right_filter)
-
-    context = {
-        'form': form,
-        'university_left_data': university_left_data,
-        'university_right_data': university_right_data,
-        'university_name_left': university_name_left,
-        'university_name_right': university_name_right,
-    }
-
-    return render(request, 'compare.html', context)
-
-
 def high_school_page(request):
     high_school_data = HighSchoolTable.objects.all().order_by('university')
     paginator = Paginator(high_school_data, 50)
@@ -189,3 +134,47 @@ def high_school_page(request):
     page_obj = paginator.get_page(page_number)
 
     return render(request, 'high_school.html', {'high_school_data': page_obj})
+
+
+def preference_tendency_view(request):
+    form = PreferenceTendencyFilterForm(request.GET)
+    data_list = VwPreferenceTendencySamePrograms.objects.all()
+
+    if form.is_valid():
+        university = form.cleaned_data.get('university')
+        major_name = form.cleaned_data.get('major_name')
+        year = form.cleaned_data.get('year')
+
+        if university:
+            data_list = data_list.filter(üniversite__in=university)
+        if major_name:
+            data_list = data_list.filter(bolum_adi__in=major_name)
+        if year:
+            try:
+                data_list = data_list.filter(yil__in=year)
+            except ValueError:
+                print("passing..")
+                pass
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        form.fields['university'].choices = [('', 'Hepsi')] + [(choice, choice) for choice in
+                                                                    data_list.values_list('üniversite',
+                                                                                          flat=True).distinct()]
+        form.fields['major_name'].choices = [('', 'Hepsi')] + [(choice, choice) for choice in
+                                                                    data_list.values_list('bolum_adi',
+                                                                                          flat=True).distinct()]
+
+        form.fields['year'].choices = [('', 'Hepsi')] + [(choice, choice) for choice in
+                                                         data_list.values_list('yil', flat=True).distinct()]
+        return render(request, 'preference_tendancy.html', {'form': form})
+
+    paginator = Paginator(data_list, 50)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'form': form,
+        'page_obj': page_obj,
+    }
+
+    return render(request, 'preference_tendancy.html', context)

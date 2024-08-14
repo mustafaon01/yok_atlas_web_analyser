@@ -4,12 +4,60 @@
     <h1>University Data Analysis</h1>
     <nav>
         <ul>
-            <li><a href="{% url 'home' %}" id="home-link">Home</a></li>
-            <li><a href="{% url 'filters_page' %}">Tables & Analysis</a></li>
-            <li><a href="{% url 'compare_page' %}" id="contact-link">Compare</a></li>
-            <li><a href="{% url 'old_hc_data_page' %}" id="contact-link">HC</a></li>
-            <li><a href="{% url 'high_school_page' %}" id="contact-link">High School</a></li>
-            <li><a href="{% url 'contact_us' %}" id="contact-link">Contact</a></li>
+            <li><a href="{% url 'home' %}" id="home-link">Ana Sayfa</a></li>
+            <li><a href="{% url 'filters_page' %}">Genel Bilgiler</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn">Daha Fazlası</a>
+                <div class="dropdown-content">
+                    <a href="{% url 'old_hc_data_page' %}" id="old-hc-link">HC</a>
+                    <a href="{% url 'high_school_page' %}" id="high-school-link">High School</a>
+                    <a href="{% url 'preference_tendency_view' %}" id="preference_tendency_view">Tercih Eğilimleri</a>
+                    <a href="{% url 'contact_us' %}" id="contact-link">Contact</a>
+                </div>
+            </li>
         </ul>
     </nav>
 </header>
+
+<style>
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropbtn {
+        color: white;
+        padding: 16px;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+    }
+
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+
+    .dropdown-content a:hover {
+        background-color: #f1f1f1;
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    .dropdown:hover .dropbtn {
+        background-color: #f1f1f1;
+    }
+</style>

@@ -3,90 +3,60 @@ from django import forms
 from .models import *
 
 
-class YourModelFilterForm(forms.Form):
-    university_type = forms.ChoiceField(
+class GeneralInformationForm(forms.Form):
+    university_type = forms.MultipleChoiceField(
         choices=[('', 'Hepsi')] + [(choice, choice) for choice in
-                                                  GenelBilgilerLast2024.objects.values_list('üniversite_türü',
-                                                                                            flat=True).distinct()],
+                                   GeneralInformation.objects.values_list('üniversite_türü',
+                                                                          flat=True).distinct()],
         required=False,
         label='Universite Türü'
     )
-    university_name = forms.ChoiceField(
+    university_name = forms.MultipleChoiceField(
         choices=[('', 'Hepsi')] + [(choice, choice) for choice in
-                                              GenelBilgilerLast2024.objects.values_list('üniversite',
-                                                                                        flat=True).distinct()],
+                                   GeneralInformation.objects.values_list('üniversite',
+                                                                          flat=True).distinct()],
         required=False,
         label='üniversite'
     )
-    major_name = forms.ChoiceField(
+    major_name = forms.MultipleChoiceField(
         choices=[('', 'Hepsi')] + [(choice, choice) for choice in
-                                              GenelBilgilerLast2024.objects.values_list('bolum_adi',
-                                                                                        flat=True).distinct()],
+                                   GeneralInformation.objects.values_list('bolum_adi',
+                                                                          flat=True).distinct()],
         required=False,
         label='Bölüm'
     )
-    year = forms.ChoiceField(
+    year = forms.MultipleChoiceField(
         choices=[('', 'Hepsi')] + [(choice, choice) for choice in
-                                              GenelBilgilerLast2024.objects.values_list('yil',
-                                                                                        flat=True).distinct()],
+                                   GeneralInformation.objects.values_list('yil',
+                                                                          flat=True).distinct()],
         required=False,
         label='Yıl'
     )
-    scholarship = forms.ChoiceField(
+    scholarship = forms.MultipleChoiceField(
         choices=[('', 'Hepsi')] + [(choice, choice) for choice in
-                                              GenelBilgilerLast2024.objects.values_list('burs_türü',
-                                                                                        flat=True).distinct()],
+                                   GeneralInformation.objects.values_list('burs_türü',
+                                                                          flat=True).distinct()],
         required=False,
         label='Burs Türü'
     )
 
 
-class CompareUniversitiesForm(forms.Form):
-    university_name_left = forms.ChoiceField(
-        choices=[('', 'All Universities')] + [(choice, choice) for choice in
-                                              GenelBilgilerLast2024.objects.values_list('üniversite', flat=True).distinct()],
+class PreferenceTendencyFilterForm(forms.Form):
+    university = forms.MultipleChoiceField(
+        choices=[('', 'Hepsi')] + [(choice, choice) for choice in
+                                   VwPreferenceTendencySamePrograms.objects.values_list('üniversite', flat=True).distinct()],
         required=False,
-        label='Left University'
+        label='Üniversite'
     )
-    university_name_right = forms.ChoiceField(
-        choices=[('', 'All Universities')] + [(choice, choice) for choice in
-                                              GenelBilgilerLast2024.objects.values_list('üniversite', flat=True).distinct()],
+    major_name = forms.MultipleChoiceField(
+        choices=[('', 'Hepsi')] + [(choice, choice) for choice in
+                                   VwPreferenceTendencySamePrograms.objects.values_list('bolum_adi', flat=True).distinct()],
         required=False,
-        label='Right University'
+        label='Bölüm Adı'
     )
-    major_name_left = forms.ChoiceField(
-        choices=[('', 'Tüm Bölümler')] + [(choice, choice) for choice in
-                                              GenelBilgilerLast2024.objects.values_list('bolum_adi', flat=True).distinct()],
+    year = forms.MultipleChoiceField(
+        choices=[('', 'Hepsi')] + [(choice, choice) for choice in
+                                   VwPreferenceTendencySamePrograms.objects.values_list('yil', flat=True).distinct()],
         required=False,
-        label='Left University'
-    )
-    major_name_right = forms.ChoiceField(
-        choices=[('', 'Tüm Bölümler')] + [(choice, choice) for choice in
-                                              GenelBilgilerLast2024.objects.values_list('bolum_adi', flat=True).distinct()],
-        required=False,
-        label='Right University'
-    )
-    university_type_left = forms.ChoiceField(
-        choices=[('', 'All University Types')] + [(choice, choice) for choice in
-                                                  GenelBilgilerLast2024.objects.values_list('üniversite_türü', flat=True).distinct()],
-        required=False,
-        label='Left University Type'
-    )
-    university_type_right = forms.ChoiceField(
-        choices=[('', 'All University Types')] + [(choice, choice) for choice in
-                                                  GenelBilgilerLast2024.objects.values_list('üniversite_türü', flat=True).distinct()],
-        required=False,
-        label='Right University Type'
-    )
-    year_left = forms.ChoiceField(
-        choices=[('', 'All Years')] + [(choice, choice) for choice in
-                                       GenelBilgilerLast2024.objects.values_list('yil', flat=True).distinct()],
-        required=False,
-        label='Left Year'
-    )
-    year_right = forms.ChoiceField(
-        choices=[('', 'All Years')] + [(choice, choice) for choice in
-                                       GenelBilgilerLast2024.objects.values_list('yil', flat=True).distinct()],
-        required=False,
-        label='Right Year'
+        label='Yıl'
     )

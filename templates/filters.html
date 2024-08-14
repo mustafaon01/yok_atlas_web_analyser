@@ -5,59 +5,58 @@
 {% block content %}
     <h2>Tables & Analysis</h2>
     <form method="get" id="filter-form">
-        <div class="filters container">
-            <div class="row">
-                <label for="university_name">Üniversite:</label>
-                <select id="university_name" name="university_name">
-                    {% for choice in form.university_name.field.choices %}
-                        <option value="{{ choice.0 }}"
-                                {% if form.university_name.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="row">
-                <label for="university_type">Üniversite Türü:</label>
-                <select id="university_type" name="university_type">
-                    {% for choice in form.university_type.field.choices %}
-                        <option value="{{ choice.0 }}"
-                                {% if form.university_type.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="row">
-                <label for="major_name">Bölüm:</label>
-                <select id="major_name" name="major_name">
-                    {% for choice in form.major_name.field.choices %}
-                        <option value="{{ choice.0 }}"
-                                {% if form.major_name.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="row">
-                <label for="year">Yıl:</label>
-                <select id="year" name="year">
-                    {% for choice in form.year.field.choices %}
-                        <option value="{{ choice.0 }}"
-                                {% if form.year.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="row">
-                <label for="scholarship">Burs Türü:</label>
-                <select id="scholarship" name="scholarship">
-                    {% for choice in form.scholarship.field.choices %}
-                        <option value="{{ choice.0 }}"
-                                {% if form.scholarship.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div>
-                <button type="submit" id="filter-button">Filter</button>
-                <button type="submit" name="export" value="true" id="export-button">Export to Excel</button>
-            </div>
+    <div class="filters container">
+        <div class="row">
+            <label for="university_name">Üniversite:</label>
+            <select id="university_name" name="university_name" multiple>
+                {% for choice in form.university_name.field.choices %}
+                    <option value="{{ choice.0 }}"
+                            {% if choice.0 in form.university_name.value %}selected{% endif %}>{{ choice.1 }}</option>
+                {% endfor %}
+            </select>
         </div>
-    </form>
-
+        <div class="row">
+            <label for="university_type">Üniversite Türü:</label>
+            <select id="university_type" name="university_type" multiple>
+                {% for choice in form.university_type.field.choices %}
+                    <option value="{{ choice.0 }}"
+                            {% if choice.0 in form.university_type.value %}selected{% endif %}>{{ choice.1 }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="row">
+            <label for="major_name">Bölüm:</label>
+            <select id="major_name" name="major_name" multiple>
+                {% for choice in form.major_name.field.choices %}
+                    <option value="{{ choice.0 }}"
+                            {% if choice.0 in form.major_name.value %}selected{% endif %}>{{ choice.1 }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="row">
+            <label for="year">Yıl:</label>
+            <select id="year" name="year" multiple>
+                {% for choice in form.year.field.choices %}
+                    <option value="{{ choice.0 }}"
+                            {% if choice.0 in form.year.value %}selected{% endif %}>{{ choice.1 }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="row">
+            <label for="scholarship">Burs Türü:</label>
+            <select id="scholarship" name="scholarship" multiple>
+                {% for choice in form.scholarship.field.choices %}
+                    <option value="{{ choice.0 }}"
+                            {% if choice.0 in form.scholarship.value %}selected{% endif %}>{{ choice.1 }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <button type="submit" id="filter-button">Filter</button>
+            <button type="submit" name="export" value="true" id="export-button">Export to Excel</button>
+        </div>
+    </div>
+</form>
     <table id="data-table">
         <thead>
         <tr>
@@ -69,6 +68,8 @@
             <th>Genel Kontenjan</th>
             <th>İlk Yerleşme Oranı</th>
             <th>Puan Türü</th>
+            <th>Puan Türü1</th>
+            <th>Puan Türü1</th>
             <th>Yıl</th>
         </tr>
         </thead>
@@ -83,6 +84,8 @@
                 <td>{{ item.genel_kontenjan }}</td>
                 <td>{{ item.i_lk_yerleşme_oranı }}</td>
                 <td>{{ item.puan_türü }}</td>
+                <td>{{ item.yerleşip_kayıt_yaptırmayan }}</td>
+                <td>{{ item.toplam_yerleşen }}</td>
                 <td>{{ item.yil }}</td>
             </tr>
         {% endfor %}
@@ -111,7 +114,23 @@
     <script>
         $(document).ready(function () {
             function bindFilterEvents() {
-                $('select').select2(); // Select2 ile dropdown menülerini daha kullanıcı dostu hale getirin
+                $('select').select2();
+                
+                $('#university_name').each(function () {
+                    var options = $(this).find('option');
+                    options.sort(function (a, b) {
+                        if (a.text.toLowerCase() > b.text.toLowerCase()) return 1;
+                        if (a.text.toLowerCase() < b.text.toLowerCase()) return -1;
+                        return 0;
+                    });
+                    $(this).empty().append(options);
+                });
+                
+                $('select[multiple]').each(function () {
+                    $(this).select2({
+                        allowClear: true
+                    });
+                });
 
                 $('#university_name, #university_type, #major_name, #year, #scholarship').change(function () {
                     $.ajax({
@@ -121,7 +140,7 @@
                         success: function (response) {
                             console.log("başarılı");
                             $('#filter-form').html($(response).find('#filter-form').html());
-                            bindFilterEvents(); // Yeni form alanlarına tekrar dinleyici ekle
+                            bindFilterEvents();
                         },
                         error: function (xhr, status, error) {
                             console.error("AJAX Hatası: ", status, error);
@@ -130,7 +149,7 @@
                 });
             }
 
-            bindFilterEvents(); // Sayfa ilk yüklendiğinde dinleyicileri bağla
+            bindFilterEvents();
         });
     </script>
 
