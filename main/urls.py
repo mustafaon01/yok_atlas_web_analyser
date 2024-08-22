@@ -8,4 +8,5 @@ urlpatterns = [
     path('hc-data', views.old_hc_data_page, name='old_hc_data_page'),
     path('high-school', views.high_school_page, name='high_school_page'),
     path('preference_tendency', views.preference_tendency_view, name='preference_tendency_view'),
+    path('tercih_sihirbazi', views.tercih_sihirbazi, name='tercih_sihirbazi'),
 ]

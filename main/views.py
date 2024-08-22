@@ -178,3 +178,17 @@ def preference_tendency_view(request):
     }
 
     return render(request, 'preference_tendancy.html', context)
+
+
+def tercih_sihirbazi(request):
+    tercih_sihirbazi_data = TercihSihirbazi.objects.all().order_by('universite')
+
+    paginator = Paginator(tercih_sihirbazi_data, 50)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'page_obj': page_obj,
+    }
+
+    return render(request, 'tercih_sihirbazi.html', context)

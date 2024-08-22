@@ -98,3 +98,26 @@ class VwPreferenceTendencySamePrograms(models.Model):
     class Meta:
         managed = False
         db_table = 'vw_preference_tendency_same_programs'
+
+
+class TercihSihirbazi(models.Model):
+    id = models.BigIntegerField(blank=False, null=False, primary_key=True)
+    yop_kodu = models.TextField(blank=True, null=True)
+    universite = models.TextField(blank=True, null=True)
+    fakulte = models.TextField(blank=True, null=True)
+    program_adi = models.TextField(blank=True, null=True)
+    sehir = models.TextField(blank=True, null=True)
+    universite_turu = models.TextField(blank=True, null=True)
+    ucret_burs = models.TextField(blank=True, null=True)
+    puan_turu = models.TextField(blank=True, null=True)
+    ogretim_turu = models.TextField(blank=True, null=True)
+    yil = models.TextField(blank=True, null=True)
+    doluluk_statu = models.TextField(blank=True, null=True)
+    kontenjan = models.TextField(blank=True, null=True)
+    taban_puan = models.FloatField(blank=True, null=True)
+    tbs = models.TextField(blank=True, null=True)
+    yerlesen = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tercih_sihirbazi'
